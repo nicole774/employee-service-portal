@@ -1,0 +1,14 @@
+# Dépendances et builds
+node_modules/
+dist/
+build/
+coverage/
+
+# Secrets : jamais dans le dépôt (un pattern sans slash s'applique à tous les niveaux)
+.env
+
+# Logs et divers
+*.log
+
+# Outils d'assistance locaux
+.claude/
