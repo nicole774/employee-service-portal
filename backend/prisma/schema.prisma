@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// EMPLOYEE crée des demandes, AGENT les traite pour son équipe, ADMIN supervise
+enum Role {
+  EMPLOYEE
+  AGENT
+  ADMIN
+}
+
+enum Category {
+  IT
+  HR
+  FACILITY
+}
+
+// Chaque priorité a un délai de service : URGENT 4h, HIGH 8h, NORMAL 24h, LOW 72h.
+// Les durées ne sont pas stockées ici : la table de correspondance vit dans le code
+// backend (src/lib/sla.js), pour rester modifiable sans migration.
+enum Priority {
+  URGENT
+  HIGH
+  NORMAL
+  LOW
+}
+
+enum RequestStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  REJECTED
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(EMPLOYEE)
+  // Équipe de l'agent : IT, HR ou FACILITY. Null pour les autres rôles.
+  team         Category?
+  createdAt    DateTime @default(now())
+  createdRequests Request[] @relation("CreatedBy")
+  assignedRequests Request[] @relation("AssignedTo")
+  comments     Comment[]
+  activityLogs ActivityLog[]
+
+  @@map("users")
+}
+
+model Request {
+  id          Int           @id @default(autoincrement())
+  title       String
+  description String
+  category    Category
+  priority    Priority      @default(NORMAL)
+  status      RequestStatus @default(OPEN)
+  // Échéance SLA : createdAt + délai de la priorité, calculée à la création
+  dueAt       DateTime
+  resolvedAt  DateTime?
+  closedAt    DateTime?
+  createdAt   DateTime      @default(now())
+
+  createdById Int
+  assignedToId Int?
+
+  createdBy  User     @relation("CreatedBy", fields: [createdById], references: [id])
+  assignedTo User?    @relation("AssignedTo", fields: [assignedToId], references: [id])
+  comments   Comment[]
+
+  @@index([status])
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([category])
+  @@map("requests")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  requestId Int
+  authorId  Int
+  body      String
+  createdAt DateTime @default(now())
+
+  request Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  author  User    @relation(fields: [authorId], references: [id])
+
+  @@index([requestId])
+  @@map("comments")
+}
+
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  action    String
+  entity    String
+  entityId  Int?
+  details   Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([userId])
+  @@map("activity_logs")
+}

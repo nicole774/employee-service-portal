@@ -1,45 +1,60 @@
 # Portail de demandes de services internes
 
-Projet 2 de mon stage Full Stack chez Arrowstack.
+C'est mon deuxième projet de stage Full Stack chez Arrowstack.
 
-Un portail interne où les employés créent des demandes (IT, RH, locaux), les demandes
-sont routées vers la bonne équipe, un délai de service (SLA) est suivi à partir de la
-priorité, et des tableaux de bord montrent la charge des équipes et le taux de respect
-des délais.
+L'idée : un portail interne où les employés déposent leurs demandes (informatique, RH,
+locaux). Chaque demande part vers la bonne équipe, reçoit une échéance (SLA) selon sa
+priorité, et l'admin a un tableau de bord pour voir la charge des équipes et si les
+délais sont tenus.
 
 ## Technologies
 
 - Backend : Node.js, Express 5, Prisma 6, PostgreSQL
-- Authentification : JWT et bcrypt
+- Authentification : JWT + bcrypt
 - Validation : zod
 - Frontend : React + Vite
 - Déploiement : Docker Compose
 
-Les raisons de ces choix sont dans [docs/decisions.md](docs/decisions.md). La stack est
-la même que celle du projet 1, volontairement réutilisée.
+J'ai repris la même stack que pour le projet 1, c'est un choix assumé ; j'explique
+pourquoi dans [docs/decisions.md](docs/decisions.md).
 
 ## Organisation du dépôt
 
 ```
-backend/     API REST
+backend/     l'API REST
   prisma/    schéma, migrations, seed
-  src/       routes, middlewares, schémas de validation
-frontend/    interface React
+  src/       routes, middlewares, schémas de validation, utilitaires (SLA, audit)
+frontend/    l'interface React (pas encore commencée)
 docs/        exigences, décisions, cas de test
-journal.md   journal de travail
+journal.md   mon journal de travail
 ```
 
 ## Lancer le backend
 
-À compléter (même démarche que le projet 1 : `.env`, `prisma migrate dev`, seed, `npm run dev`).
+Prérequis : Node.js et un PostgreSQL local.
+
+```bash
+cd backend
+npm install
+cp .env.example .env        # puis renseigner DATABASE_URL et JWT_SECRET
+npx prisma migrate dev
+npx prisma db seed
+npm run dev
+```
+
+L'API tourne sur `http://localhost:4000`. Le seed crée 6 comptes de test (un admin,
+un agent par équipe, deux employés) ; les identifiants sont dans `prisma/seed.js`.
+
+Attention : si le backend du projet 1 tourne encore, il occupe aussi le port 4000.
+Il faut l'arrêter avant (je me suis fait avoir, voir le journal du 9 novembre).
 
 ## Lancer le frontend
 
-À compléter.
+Pas encore fait.
 
 ## Lancer avec Docker
 
-À compléter.
+Pas encore fait.
 
 ## Documentation
 
