@@ -1,0 +1,12 @@
+# Une seule règle de fins de ligne pour tout le dépôt : LF (format Linux),
+# quel que soit le système de la personne qui travaille dessus.
+# Évite les avertissements « LF will be replaced by CRLF » sous Windows,
+# et les scripts cassés dans les conteneurs Docker (qui tournent sous Linux).
+* text=auto eol=lf
+
+# Fichiers binaires : ne jamais toucher à leur contenu
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.pdf binary

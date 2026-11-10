@@ -72,7 +72,7 @@
 | | |
 |---|---|
 | Étapes | Refaire les actions ci-dessus, puis consulter le journal en ADMIN |
-| Attendu | CREATE_REQUEST, ASSIGN_REQUEST, UPDATE_STATUS, COMMENT visibles avec auteur et date |
+| Attendu | CREATE_REQUEST, ASSIGN_REQUEST, UPDATE_REQUEST_STATUS, COMMENT_REQUEST visibles avec auteur et date |
 | Preuve | à faire |
 
 ## CT-10 - Docker
