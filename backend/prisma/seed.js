@@ -1,13 +1,13 @@
 // Données de démonstration : 1 admin, 3 agents (une par équipe), 2 employés,
-// et 5 demandes dont 2 pour tester les cas limites du SLA.
+// et 5 demandes, dont 2 pour tester le SLA : une en retard, une encore dans les temps.
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const { PrismaClient, Priority, Category } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-// Délais de SLA en heures, identiques à ce que l'API utilisera (src/lib/sla.js)
-const SLA_HOURS = { URGENT: 4, HIGH: 8, NORMAL: 24, LOW: 72 };
+// Les délais de SLA viennent du même fichier que l'API (D2) : une seule source
+const { computeDueAt } = require('../src/lib/sla');
 
 // [titre, description, catégorie, priorité, heures écoulées depuis la création]
 const requests = [
@@ -48,7 +48,7 @@ async function main() {
     //  - « Badge d'accès perdu » (URGENT, 30h) → en retard (SLA 4h), pour CT-07
     //  - « Écran qui clignote » (HIGH, 2h) → encore dans les temps (SLA 8h)
     const createdAt = new Date(Date.now() - hoursAgo * 3600 * 1000);
-    const dueAt = new Date(createdAt.getTime() + SLA_HOURS[priority] * 3600 * 1000);
+    const dueAt = computeDueAt(priority, createdAt);
 
     const exists = await prisma.request.findFirst({ where: { title } });
     if (!exists) {

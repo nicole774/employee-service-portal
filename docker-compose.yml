@@ -1,0 +1,62 @@
+# Lance tout le projet : base PostgreSQL, API et interface.
+#   docker compose up -d --build
+#
+# Ports choisis exprès différents de ceux du développement (4000 et 5173) et du
+# projet 1 : on peut garder les serveurs de dev lancés sans conflit.
+# (Le 9 novembre, deux serveurs sur le même port m'ont fait perdre du temps.)
+#   - interface : http://localhost:8080
+#   - API       : http://localhost:4100/api
+
+services:
+  # 1. La base de données
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: portal
+      POSTGRES_PASSWORD: portal_secret
+      POSTGRES_DB: service_requests
+    # Les données survivent à un « docker compose down » (mais pas à « down -v »).
+    # Avec postgres 18, on monte /var/lib/postgresql (et plus .../data)
+    volumes:
+      - pgdata:/var/lib/postgresql
+    # Le backend attend que la base réponde vraiment avant de démarrer
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portal -d service_requests"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # 2. L'API REST
+  backend:
+    build: ./backend
+    ports:
+      - "4100:4000"
+    environment:
+      # L'hôte est « db », le nom du service : dans le réseau Docker,
+      # les conteneurs se trouvent par leur nom, pas par localhost
+      DATABASE_URL: postgresql://portal:portal_secret@db:5432/service_requests?schema=public
+      JWT_SECRET: secret-de-demo-a-changer-en-production
+      JWT_EXPIRES_IN: 1d
+    depends_on:
+      db:
+        condition: service_healthy
+    # Avant de démarrer : appliquer les migrations puis le seed.
+    # Le seed peut tourner à chaque démarrage sans créer de doublons
+    # (comptes en upsert, demandes créées seulement si elles n'existent pas).
+    command: sh -c "npx prisma migrate deploy && npx prisma db seed && npm start"
+
+  # 3. L'interface React, servie par nginx
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # C'est le NAVIGATEUR qui appelle l'API, pas le conteneur :
+        # il faut donc l'adresse vue depuis ta machine (localhost:4100)
+        VITE_API_URL: http://localhost:4100/api
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

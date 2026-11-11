@@ -18,7 +18,9 @@ squelette du backend du projet 1 (auth, middlewares, validation).
 
 - Base `service_requests` créée, dépendances installées, première migration (4 tables)
   et seed. Le seed crée 6 comptes (1 admin, 1 agent par équipe, 2 employés) et 5
-  demandes, dont 2 que j'ai mises en retard exprès pour tester les indicateurs.
+  demandes. Pour tester le SLA, j'en ai daté deux dans le passé : « Badge d'accès
+  perdu » (URGENT, créée 30h avant, donc en retard) et « Écran qui clignote » (HIGH,
+  créée 2h avant, encore dans les temps).
 - Auth : pas de `/register`, c'est l'ADMIN qui crée les comptes (D1). J'ai ajouté
   l'équipe de l'agent dans le JWT.
 - J'ai écrit `src/lib/sla.js` : l'échéance est calculée à la création selon la
@@ -45,8 +47,43 @@ squelette du backend du projet 1 (auth, middlewares, validation).
   pour un agent IT sur une demande RH), assignation, chaîne complète OPEN →
   IN_PROGRESS → RESOLVED (avec `resolvedAt` rempli) → CLOSED, transition invalide
   refusée avec la liste des statuts possibles, commentaires dans l'ordre, tableau de
-  bord cohérent avec la base (les demandes du seed créées 17h avant sont bien en
-  retard), et journal d'audit rempli.
+  bord cohérent avec la base (la demande du badge, créée 30h avant, est bien
+  détectée en retard), et journal d'audit rempli.
 
 Prochaine étape : le frontend (en reprenant des composants du projet 1, avec les pages
 connexion, mes demandes, nouvelle demande, détail et admin), puis Docker et les preuves.
+
+## 10 novembre 2026
+
+- Frontend terminé : une coque avec barre latérale, et des pages selon le rôle
+  (mes demandes et nouvelle demande pour l'employé, Kanban pour l'agent, tableau de
+  bord, comptes et journal pour l'admin).
+- Relecture et corrections :
+  - le Kanban demandait 100 demandes alors que l'API en renvoie 50 au maximum ; il
+    charge maintenant toutes les pages ;
+  - deux erreurs de lint (`setState` appelé directement dans un `useEffect`) : en les
+    corrigeant, j'ai aussi évité qu'une ancienne réponse écrase une plus récente quand
+    on change vite de filtre ;
+  - des `<main>` imbriqués remplacés par des `<section>` ;
+  - le titre de l'onglet était encore « B2B Commandes », copié du projet 1.
+- Kanban : la colonne « Terminées » ne montre que les 3 plus récentes, avec un bouton
+  pour voir les autres. Je n'ai pas fait de suppression : les demandes terminées
+  comptent dans le taux de SLA et dans le journal d'audit.
+- Ajout d'un `.gitattributes` pour fixer les fins de ligne (LF) dans tout le dépôt et
+  ne plus avoir l'avertissement « LF will be replaced by CRLF ».
+- Première Pull Request sur GitHub pour fusionner le frontend dans `main`. J'ai appris
+  qu'après une fusion sur GitHub, il faut faire `git pull`, pas `git push`.
+- Docker : un Dockerfile pour le backend, un pour le frontend (build Vite puis nginx),
+  et un `docker-compose.yml` avec la base, l'API et l'interface. Les ports sont
+  différents de ceux du dev (8080 et 4100) pour éviter le conflit de port du 9
+  novembre. L'adresse de l'API est passée au build du frontend, parce que c'est le
+  navigateur qui l'appelle, pas le conteneur. Testé : migrations et seed appliqués au
+  démarrage, connexion et tableau de bord OK.
+
+- En relisant, j'ai vu que le journal du 9 novembre parlait de 2 demandes en retard
+  dans le seed, alors qu'il n'y en a qu'une (l'autre est datée dans le passé mais
+  reste dans les temps). Journal corrigé. Le seed avait aussi sa propre copie des
+  délais SLA, contrairement à D2 : il utilise maintenant `src/lib/sla.js`.
+
+Prochaine étape : dérouler les cas de test CT-01 à CT-10 et ranger les captures dans
+`docs/preuves/`.
