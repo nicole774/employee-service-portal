@@ -24,7 +24,7 @@ pourquoi dans [docs/decisions.md](docs/decisions.md).
 backend/     l'API REST
   prisma/    schéma, migrations, seed
   src/       routes, middlewares, schémas de validation, utilitaires (SLA, audit)
-frontend/    l'interface React (pas encore commencée)
+frontend/    l'interface React
 docs/        exigences, décisions, cas de test
 journal.md   mon journal de travail
 ```
@@ -50,11 +50,37 @@ Il faut l'arrêter avant (je me suis fait avoir, voir le journal du 9 novembre).
 
 ## Lancer le frontend
 
-Pas encore fait.
+Le backend doit tourner en même temps.
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+L'interface s'ouvre sur `http://localhost:5173`. Par défaut, elle appelle l'API sur
+`http://localhost:4000/api` ; on peut changer cette adresse avec la variable
+`VITE_API_URL`.
 
 ## Lancer avec Docker
 
-Pas encore fait.
+Il suffit d'avoir Docker Desktop. Depuis la racine du projet :
+
+```bash
+docker compose up -d --build
+```
+
+Ça lance trois conteneurs : PostgreSQL, l'API et l'interface. Au démarrage, l'API
+applique les migrations et charge le seed toute seule.
+
+- Interface : `http://localhost:8080`
+- API : `http://localhost:4100/api` (test rapide : `/api/health`)
+
+J'ai choisi des ports différents de ceux du développement, pour pouvoir garder les
+deux en même temps sans conflit.
+
+Pour arrêter : `docker compose down`. Pour repartir d'une base vide :
+`docker compose down -v` (supprime aussi les données).
 
 ## Documentation
 
