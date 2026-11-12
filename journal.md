@@ -87,3 +87,32 @@ connexion, mes demandes, nouvelle demande, détail et admin), puis Docker et les
 
 Prochaine étape : dérouler les cas de test CT-01 à CT-10 et ranger les captures dans
 `docs/preuves/`.
+
+## 11 et 12 novembre 2026
+
+- Tests CT-01 à CT-10 déroulés sur la version Docker : **10 sur 10 conformes**.
+  Résultats et captures dans `docs/cas-de-test.md` et `docs/preuves/`.
+- Pour le backend, j'ai appelé l'API directement avec `curl`, pour prouver que la
+  sécurité est vérifiée par le serveur et pas seulement cachée dans l'interface. Pour
+  aller plus vite, je récupère le token directement dans une variable :
+  `TOKEN=$(curl ... | sed ...)`. Une capture du terminal par test suffit.
+- Pour le frontend, quelques captures seulement, et une vidéo de démonstration pour
+  le parcours complet.
+- Ce que les tests m'ont appris :
+  - Docker Desktop s'est arrêté pendant les tests (« Docker Engine stopped
+    unexpectedly ») à cause de WSL, sûrement après une mise à jour. Redémarrer Docker
+    Desktop a suffi.
+  - Les accents envoyés avec `curl` depuis Git Bash arrivaient cassés dans la base.
+    C'est l'encodage du terminal, pas l'API : `chcp.com 65001` règle le problème.
+  - CT-07 a montré quatre demandes en retard au lieu d'une, parce que la base avait
+    été remplie la veille et que les délais avaient continué de courir. C'est le bon
+    comportement (le retard est recalculé à chaque requête, D3), mais je ne l'avais
+    pas anticipé dans le résultat attendu.
+  - CT-10 a révélé un défaut : sur une base neuve, la jauge du tableau de bord
+    affichait « 0 % » alors qu'aucune demande n'était résolue. L'API renvoyait `null`,
+    c'est l'interface qui le changeait en 0. Corrigé : elle affiche « — ».
+- J'ai envisagé de laisser chaque employé créer son compte. J'ai gardé la création par
+  l'admin (D1) : c'est un portail interne, et une inscription libre permettrait à une
+  personne extérieure d'entrer. L'idée est notée comme amélioration possible.
+
+Prochaine étape : enregistrer la vidéo de démonstration et ajouter son lien au README.
