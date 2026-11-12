@@ -7,11 +7,17 @@ import { CATEGORY_LABELS, PRIORITY_LABELS, formatDateTime } from '../format.js'
 // Toutes les données viennent de GET /api/admin/dashboard.
 function Dashboard() {
   const [data, setData] = useState(null)
+  // Les demandes ouvertes que personne n'a encore prises : c'est le travail de
+  // routage de l'admin, donc on les montre en premier
+  const [toRoute, setToRoute] = useState([])
   const [error, setError] = useState('')
 
   useEffect(() => {
-    api('/admin/dashboard')
-      .then(setData)
+    Promise.all([api('/admin/dashboard'), api('/requests?status=OPEN&limit=50')])
+      .then(([dashboard, open]) => {
+        setData(dashboard)
+        setToRoute(open.data.filter((request) => !request.assignedToId))
+      })
       .catch((e) => setError(e.message))
   }, [])
 
@@ -70,6 +76,22 @@ function Dashboard() {
         <div className="stat-tile tile-green"><span className="stat-value">{resolved + closed}</span><span className="stat-label">Terminées</span></div>
         <div className="stat-tile tile-red"><span className="stat-value">{data.overdue.length}</span><span className="stat-label">En retard</span></div>
       </div>
+
+      <h2 className="section-title">À router <span className="count-badge">{toRoute.length}</span></h2>
+      {toRoute.length === 0 && <div className="card"><p style={{ margin: 0 }}>Toutes les demandes ouvertes sont assignées.</p></div>}
+      {toRoute.map((request) => (
+        <Link to={`/demandes/${request.id}`} key={request.id} className="card request-card">
+          <div className="request-title">
+            <strong>#{request.id} — {request.title}</strong>
+            <span className={`chip chip-${request.priority}`}>{PRIORITY_LABELS[request.priority]}</span>
+            {request.overdue && <span className="badge badge-out">En retard</span>}
+          </div>
+          <p className="request-meta">
+            {CATEGORY_LABELS[request.category]} · créée le {formatDateTime(request.createdAt)}
+            {' '}par {request.createdBy?.name} · échéance {formatDateTime(request.dueAt)}
+          </p>
+        </Link>
+      ))}
 
       <h2 className="section-title">Charge par équipe (demandes actives)</h2>
       <div className="card">

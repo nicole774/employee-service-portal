@@ -43,7 +43,9 @@ function App() {
       <aside className="sidebar">
         <div className="sidebar-logo"><span className="logo-mark">◆</span> Portail demandes</div>
         <nav className="sidebar-nav">
-          <NavLink to="/" end className={({ isActive }) => isActive ? 'sidebar-item active' : 'sidebar-item'}>
+          {/* La liste a sa propre adresse : avant, ce lien pointait vers « / », qui
+              renvoie l'admin sur son tableau de bord, donc il ne voyait jamais la liste */}
+          <NavLink to="/demandes" className={({ isActive }) => isActive ? 'sidebar-item active' : 'sidebar-item'}>
             📥 Demandes
           </NavLink>
           {user.role === 'EMPLOYEE' && (
@@ -86,7 +88,8 @@ function App() {
         <Routes>
           {/* Accueil selon le rôle : l'admin atterrit sur son tableau de bord,
               les autres sur la liste de leurs demandes */}
-          <Route path="/" element={user.role === 'ADMIN' ? <Navigate to="/admin" replace /> : <Requests />} />
+          <Route path="/" element={<Navigate to={user.role === 'ADMIN' ? '/admin' : '/demandes'} replace />} />
+          <Route path="/demandes" element={<Requests />} />
           <Route path="/connexion" element={<Navigate to="/" replace />} />
           <Route path="/nouvelle" element={<RequireRole role="EMPLOYEE"><NewRequest /></RequireRole>} />
           <Route path="/demandes/:id" element={<RequestDetail />} />

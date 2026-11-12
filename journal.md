@@ -115,4 +115,13 @@ Prochaine étape : dérouler les cas de test CT-01 à CT-10 et ranger les captur
   l'admin (D1) : c'est un portail interne, et une inscription libre permettrait à une
   personne extérieure d'entrer. L'idée est notée comme amélioration possible.
 
-Prochaine étape : enregistrer la vidéo de démonstration et ajouter son lien au README.
+- En préparant la vidéo, j'ai trouvé deux problèmes dans l'interface admin :
+  - le lien « Demandes » pointait vers `/`, qui renvoie l'admin sur son tableau de
+    bord : il ne pouvait jamais voir la liste. La liste a maintenant sa propre
+    adresse, `/demandes` ;
+  - une nouvelle demande n'apparaissait que dans le compteur « Ouvertes ». J'ai ajouté
+    une section « À router » au tableau de bord, avec les demandes ouvertes non
+    assignées, puisque c'est le travail de l'admin de les répartir.
+- Vidéo de démonstration enregistrée et mise sur Google Drive, lien dans le README.
+
+Le projet est complet : backend, frontend, Docker, tests et vidéo.
