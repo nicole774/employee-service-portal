@@ -121,7 +121,7 @@ function RequestDetail() {
     <section>
       <div className="page-header">
         <h1>#{request.id} — {request.title}</h1>
-        <Link to="/" className="link-button">← Retour à la liste</Link>
+        <Link to="/demandes" className="link-button">← Retour à la liste</Link>
       </div>
 
       <div className="card">

@@ -88,7 +88,10 @@ Les 10 cas de test (connexion, rôles, SLA, visibilité, statuts, commentaires, 
 tableau de bord, journal d'audit, Docker) sont tous conformes. Le détail et les
 captures sont dans [docs/cas-de-test.md](docs/cas-de-test.md).
 
-Vidéo de démonstration : à venir.
+**[Vidéo de démonstration](https://drive.google.com/file/d/12G0mrK6iNChhQ1PIImGRF4aHg4isd8-y/view?usp=sharing)** :
+le parcours complet d'une demande, de sa création par un employé jusqu'à sa résolution
+par l'agent, avec le routage par l'admin, le Kanban, les commentaires, le tableau de bord
+et le journal d'audit.
 
 ## Améliorations possibles
 
