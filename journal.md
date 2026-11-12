@@ -73,6 +73,10 @@ connexion, mes demandes, nouvelle demande, détail et admin), puis Docker et les
   ne plus avoir l'avertissement « LF will be replaced by CRLF ».
 - Première Pull Request sur GitHub pour fusionner le frontend dans `main`. J'ai appris
   qu'après une fusion sur GitHub, il faut faire `git pull`, pas `git push`.
+- À partir du frontend, je travaille avec une branche par fonctionnalité et une Pull
+  Request pour fusionner dans `main`. Le backend avait été commité directement sur
+  `main`, avant que je mette en place cette façon de travailler : c'est pour ça qu'il
+  n'a pas de Pull Request.
 - Docker : un Dockerfile pour le backend, un pour le frontend (build Vite puis nginx),
   et un `docker-compose.yml` avec la base, l'API et l'interface. Les ports sont
   différents de ceux du dev (8080 et 4100) pour éviter le conflit de port du 9
