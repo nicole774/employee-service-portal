@@ -115,14 +115,14 @@ dépassée. Ce retard n'est pas stocké, il est recalculé à chaque fois (voir 
 
 ## 9. Critères d'acceptation
 
-- [ ] Quand un EMPLOYEE crée une demande, son échéance est calculée selon la priorité (CT-03).
-- [ ] Un EMPLOYEE ne voit que ses demandes, et un AGENT IT ne voit pas celles des RH (CT-04).
-- [ ] L'ADMIN assigne une demande IT à un agent IT, qui la passe en IN_PROGRESS puis RESOLVED (CT-05).
-- [ ] Passer directement de OPEN à CLOSED est refusé avec un message clair (CT-05).
-- [ ] Une demande URGENT non résolue après 4h apparaît en retard dans le tableau de bord (CT-07).
-- [ ] Le tableau de bord affiche le taux de respect des SLA et la charge par équipe (CT-08).
-- [ ] Création, assignation, changement de statut et commentaire apparaissent dans le journal d'audit (CT-09).
-- [ ] Le mentor peut lancer tout le projet avec `docker compose up --build` en suivant le README (CT-10).
+- [x] Quand un EMPLOYEE crée une demande, son échéance est calculée selon la priorité (CT-03).
+- [x] Un EMPLOYEE ne voit que ses demandes, et un AGENT IT ne voit pas celles des RH (CT-04).
+- [x] L'ADMIN assigne une demande IT à un agent IT, qui la passe en IN_PROGRESS puis RESOLVED (CT-05).
+- [x] Passer directement de OPEN à CLOSED est refusé avec un message clair (CT-05).
+- [x] Une demande URGENT non résolue après 4h apparaît en retard dans le tableau de bord (CT-07).
+- [x] Le tableau de bord affiche le taux de respect des SLA et la charge par équipe (CT-08).
+- [x] Création, assignation, changement de statut et commentaire apparaissent dans le journal d'audit (CT-09).
+- [x] Le mentor peut lancer tout le projet avec `docker compose up --build` en suivant le README (CT-10).
 
 ## 10. Comment je saurai que c'est réussi
 

@@ -82,6 +82,23 @@ deux en même temps sans conflit.
 Pour arrêter : `docker compose down`. Pour repartir d'une base vide :
 `docker compose down -v` (supprime aussi les données).
 
+## Tests
+
+Les 10 cas de test (connexion, rôles, SLA, visibilité, statuts, commentaires, retards,
+tableau de bord, journal d'audit, Docker) sont tous conformes. Le détail et les
+captures sont dans [docs/cas-de-test.md](docs/cas-de-test.md).
+
+Vidéo de démonstration : à venir.
+
+## Améliorations possibles
+
+- **Inscription avec validation par l'admin** : aujourd'hui, seul l'admin crée les
+  comptes (voir D1). On pourrait laisser chacun s'inscrire, mais toujours en EMPLOYEE,
+  avec un compte « en attente » que l'admin valide avant la première connexion.
+- **Notifications par email** quand une demande change de statut ou reçoit un
+  commentaire (exclues du périmètre pour l'instant).
+- **Pièces jointes** sur les demandes (une capture d'écran d'erreur, par exemple).
+
 ## Documentation
 
 - [Exigences](docs/exigences.md) : rôles, fonctionnalités, modèle de données, routes, critères d'acceptation

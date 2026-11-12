@@ -19,9 +19,12 @@ function Dashboard() {
   if (!data) return <section><p>Chargement…</p></section>
 
   // La jauge : un cercle SVG dont la portion colorée représente le taux de SLA
-  const rate = data.sla.rate ?? 0
+  // Tant qu'aucune demande n'est résolue, l'API renvoie rate = null : il n'y a
+  // rien à mesurer, donc on affiche « — » plutôt qu'un 0 % trompeur
+  const rate = data.sla.rate
+  const hasRate = rate !== null && rate !== undefined
   const circumference = 2 * Math.PI * 50
-  const filled = (rate / 100) * circumference
+  const filled = hasRate ? (rate / 100) * circumference : 0
 
   const open = data.byStatus.find((s) => s.status === 'OPEN')?.count ?? 0
   const inProgress = data.byStatus.find((s) => s.status === 'IN_PROGRESS')?.count ?? 0
@@ -36,18 +39,30 @@ function Dashboard() {
 
       <div className="stat-grid">
         <div className="sla-card">
-          <svg className="donut" viewBox="0 0 120 120" role="img" aria-label={`Taux de SLA respectés : ${rate} %`}>
+          <svg
+            className="donut" viewBox="0 0 120 120" role="img"
+            aria-label={hasRate ? `Taux de SLA respectés : ${rate} %` : 'Taux de SLA : aucune demande résolue pour le moment'}
+          >
             <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" strokeWidth="10" />
-            <circle
-              cx="60" cy="60" r="50" fill="none" stroke="#4f46e5" strokeWidth="10" strokeLinecap="round"
-              strokeDasharray={`${filled} ${circumference}`} transform="rotate(-90 60 60)"
-            />
-            <text x="60" y="58" textAnchor="middle" className="donut-value">{rate} %</text>
+            {/* Pas d'arc à 0 : avec des bouts arrondis, il laisserait un point isolé */}
+            {filled > 0 && (
+              <circle
+                cx="60" cy="60" r="50" fill="none" stroke="#4f46e5" strokeWidth="10" strokeLinecap="round"
+                strokeDasharray={`${filled} ${circumference}`} transform="rotate(-90 60 60)"
+              />
+            )}
+            <text x="60" y="58" textAnchor="middle" className="donut-value">{hasRate ? `${rate} %` : '—'}</text>
             <text x="60" y="76" textAnchor="middle" className="donut-label">SLA respectés</text>
           </svg>
           <p className="sla-note">
-            {data.sla.resolvedInTime} résolues dans les délais<br />
-            sur {data.sla.resolved} résolues au total
+            {hasRate ? (
+              <>
+                {data.sla.resolvedInTime} résolues dans les délais<br />
+                sur {data.sla.resolved} résolues au total
+              </>
+            ) : (
+              <>Aucune demande résolue pour le moment :<br />le taux s'affichera dès la première.</>
+            )}
           </p>
         </div>
         <div className="stat-tile tile-amber"><span className="stat-value">{open}</span><span className="stat-label">Ouvertes</span></div>
